@@ -8,9 +8,11 @@ import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
@@ -54,6 +56,9 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	protected HashMap<Integer, Boolean> writeCoil = new HashMap<>();// address for writing Coil
 	protected HashMap<String, HashMap<String, Integer>> textAddr = new HashMap<>();
 	protected HashMap<String, Integer> floatAddr = new HashMap<>();
+	// -------------------------------------address that will be executed to record
+	// the data------------------------
+	protected HashMap<String, List<String>> tagNeedToRecord = new HashMap<>();
 	// ----------------------------------------------output----------------------------
 	protected HashMap<String, Boolean> outputDi = new HashMap<>();
 	protected HashMap<String, Integer> outputAi = new HashMap<>();
@@ -96,7 +101,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	public String deviceName;
 	protected JSONObject deviceData;
 	public Semaphore permit = new Semaphore(2);
-	private Semaphore wrAddrrPermit = new Semaphore(1);
+	protected Semaphore wrAddrrPermit = new Semaphore(1);
 	// -------------------------------------------------------webSockets--------------------------
 	public HashMap<String, WebSocket> clients = new HashMap<>();
 	public volatile boolean isWatching;
@@ -785,7 +790,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		}
 	}
 
-	public void diAlarmFormat(boolean currentValue, String ifTrue, String ifFalse) {
+	protected void diAlarmFormat(boolean currentValue, String ifTrue, String ifFalse) {
 		if (currentValue) {
 			writeLog(getTime() + ifTrue);
 		} else {
@@ -793,15 +798,15 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		}
 	}
 
-	public void aiAlarmFormat(String alarm) {
+	protected void aiAlarmFormat(String alarm) {
 		writeLog(getTime() + alarm);
 	}
 
-	public void textAlarmFormat(String key, String text) {
+	protected void textAlarmFormat(String key, String text) {
 		writeLog(getTime() + key + " changed to : " + text);
 	}
 
-	public void putAllAddressAlarm() {
+	private void putAllAddressAlarm() {
 		// ------------------------------put all the
 		// addressess----------------------------------------------------
 		try {
@@ -852,6 +857,8 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				analogAllowWrite.putAll(processBooleanAllowNode(deviceData.getJSONObject("aiSAddr")));
 
 				floatAllowWrite = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
+
+				this.tagNeedToRecord = processNeedToRecord();
 
 			} catch (JSONException e) {
 				System.out.println("Error in reading the Alarm Data" + e.getMessage());
@@ -944,6 +951,33 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 			textAddrMap.put(key, valueMap);
 		}
 		return textAddrMap;
+	}
+
+	private HashMap<String, List<String>> processNeedToRecord() throws JSONException {
+		HashMap<String, List<String>> dataNeedToScheduled = new HashMap<>();
+		String tagVariables[] = { "aiAddr", "ai32Addr", "aiSAddr", "floatAddr" };
+
+		for (String tagVariable : tagVariables) {
+			List<String> needToRecord = new ArrayList<>();
+			JSONObject tagType = this.deviceData.getJSONObject(tagVariable);
+			@SuppressWarnings("unchecked")
+			Iterator<String> keys = tagType.keys();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				JSONObject valueNode = tagType.getJSONObject(key);
+				try {
+					boolean needToPlot = valueNode.getBoolean("scheduled");
+					if (needToPlot) {
+						needToRecord.add(key);
+					}
+				} catch (Exception e) {
+					// this is where the code fall if the "scheduled" is not available for the tag
+				}
+				dataNeedToScheduled.put(tagVariable, needToRecord);
+			}
+		}
+		System.out.println(dataNeedToScheduled);
+		return dataNeedToScheduled;
 	}
 
 	@SuppressWarnings("deprecation")

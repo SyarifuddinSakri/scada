@@ -15,8 +15,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-
 @Component
 public class Server {
 	protected HashMap<String, JSONObject> dataList = new HashMap<>();

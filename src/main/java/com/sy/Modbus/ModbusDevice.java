@@ -1,27 +1,41 @@
 package com.sy.Modbus;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import com.sy.Modbus.Repo.AlarmLogRepo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
+@EnableScheduling
 @Component
 @Scope("prototype")
 public class ModbusDevice extends ModbusDeviceTransaction {
 	@Autowired
 	Server server;
+	ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	@Autowired
 	public ModbusDevice(String deviceName, JSONObject deviceData, AlarmLogRepo alarmLogRepo) throws JSONException {
 		super(deviceName, deviceData, alarmLogRepo);
+		samplingAnalog(scheduler);
+
 	}
 
 	@Override
 	public void onValueChangeDi(String key, boolean currentValue) {
-		// TODO Auto-generated method stub
 		if (currentValue) {
 			if (digitalAlarmTextIfTrue.containsKey(key)) {
 				writeLog(getTime() + digitalAlarmTextIfTrue.get(key));
@@ -35,7 +49,6 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 	@Override
 	public void onValueChangeAi(String key, int currentValue) {
-		// TODO Auto-generated method stub
 		try {
 			int lowerLimit = analogTrigThresholdMin.get(key);
 			int upperLimit = analogTrigThresholdMax.get(key);
@@ -56,20 +69,17 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 	@Override
 	public void onValueChangeText(String key, String currentValue) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void onTick() {
-		// TODO Auto-generated method stub
 		server.dataList.put(deviceName, data);
 
 	}
 
 	@Override
 	public void onValueChangeFloat(String key, Float currentValue) {
-		// TODO Auto-generated method stub
 		try {
 			float lowerLimit = floatTrigThresholdMin.get(key);
 			float upperLimit = floatTrigThresholdMax.get(key);
@@ -87,6 +97,37 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 		} catch (Exception e) {
 
 		}
-
 	}
+
+	protected void samplingAnalog(ScheduledExecutorService scheduler) {
+		LocalDateTime now = LocalDateTime.now();
+		// LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+		LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+		long delay = now.until(nextHour, ChronoUnit.MILLIS);
+
+		scheduler.schedule(() -> {
+			HashMap<String, HashMap<String, String>> finalValue = new HashMap<>();
+			try {
+				this.wrAddrrPermit.acquire();
+				int index = 0;
+				for (String tagType : this.tagNeedToRecord.keySet()) {
+					if (data.has(tagType)) {
+						JSONObject dataObject = data.getJSONObject(tagType);
+						JSONObject dataObjectObj = dataObject.getJSONObject(tagNeedToRecord.get(tagType).get(index));
+						index++;
+						System.out.println(dataObjectObj);
+					}
+				}
+
+				this.wrAddrrPermit.release();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				System.out.println("Cannot make sampling data " + e + deviceName);
+			}
+
+			samplingAnalog(scheduler);
+		}, delay, TimeUnit.MILLISECONDS);
+	}
+
 }

@@ -26,7 +26,8 @@
                 "min":20,
                 "max":27000,
                 "ifMin": "Almost empty!",
-                "ifMax": "Full!"
+                "ifMax": "Full!",
+                "scheduled":true
             },
             "tank2": {
                 "Address": 1281,
@@ -40,7 +41,8 @@
             "UTCTime": {
                 "Address": 22028,
                 "ifMin": null,
-                "ifMax": null
+                "ifMax": null,
+                "scheduled":true
             },
             "CurrentOutput": {
                 "Address": 22020,
@@ -148,7 +150,8 @@
             "Voltage": {
                 "Address": 22022,
                 "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
+                "ifMax": "Voltage hit the upper threshold",
+                "scheduled":true
             }
         },
         "aiSAddr": {
