@@ -3,15 +3,12 @@ package com.sy.Modbus;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.sy.Modbus.Repo.AlarmLogRepo;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +71,7 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 	@Override
 	public void onTick() {
-		server.dataList.put(deviceName, data);
+		// server.dataList.put(deviceName, data);
 
 	}
 
@@ -106,24 +103,28 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 		long delay = now.until(nextHour, ChronoUnit.MILLIS);
 
 		scheduler.schedule(() -> {
-			HashMap<String, HashMap<String, String>> finalValue = new HashMap<>();
 			try {
 				this.wrAddrrPermit.acquire();
-				int index = 0;
-				for (String tagType : this.tagNeedToRecord.keySet()) {
-					if (data.has(tagType)) {
-						JSONObject dataObject = data.getJSONObject(tagType);
-						JSONObject dataObjectObj = dataObject.getJSONObject(tagNeedToRecord.get(tagType).get(index));
-						index++;
-						System.out.println(dataObjectObj);
-					}
-				}
+					if (data.has("Analog") && !data.isNull("Analog")) {
+					//need to be casted into string as some error occurs if directly taken from JSONObject
+					String dataString = data.toString();
+					JSONObject dataJson = new JSONObject(dataString);
+					JSONObject dataAnalog = dataJson.getJSONObject("Analog");
 
+					//loop through all the processNeedToRecord() return function in Transaction
+					for(String tag : tagNeedToRecordAnalog){
+						System.out.println("This is tag : " + tag + " this is the value : "+ dataAnalog.get(tag));
+					}
+					
+					}
 				this.wrAddrrPermit.release();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
+				this.wrAddrrPermit.release();
 				System.out.println("Cannot make sampling data " + e + deviceName);
+			}finally{
+				this.wrAddrrPermit.release();
 			}
 
 			samplingAnalog(scheduler);

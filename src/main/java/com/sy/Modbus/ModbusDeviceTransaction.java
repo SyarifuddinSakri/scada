@@ -58,7 +58,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	protected HashMap<String, Integer> floatAddr = new HashMap<>();
 	// -------------------------------------address that will be executed to record
 	// the data------------------------
-	protected HashMap<String, List<String>> tagNeedToRecord = new HashMap<>();
+	protected ArrayList<String> tagNeedToRecordAnalog = new ArrayList<>();
 	// ----------------------------------------------output----------------------------
 	protected HashMap<String, Boolean> outputDi = new HashMap<>();
 	protected HashMap<String, Integer> outputAi = new HashMap<>();
@@ -858,7 +858,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 				floatAllowWrite = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
 
-				this.tagNeedToRecord = processNeedToRecord();
+				this.tagNeedToRecordAnalog = processNeedToRecordAnalog();
 
 			} catch (JSONException e) {
 				System.out.println("Error in reading the Alarm Data" + e.getMessage());
@@ -953,12 +953,11 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		return textAddrMap;
 	}
 
-	private HashMap<String, List<String>> processNeedToRecord() throws JSONException {
-		HashMap<String, List<String>> dataNeedToScheduled = new HashMap<>();
-		String tagVariables[] = { "aiAddr", "ai32Addr", "aiSAddr", "floatAddr" };
+	private ArrayList<String> processNeedToRecordAnalog() throws JSONException {
+		ArrayList<String> dataNeedToScheduled = new ArrayList<>();
+		String tagVariables[] = {"aiAddr", "ai32Addr", "aiSAddr"};
 
-		for (String tagVariable : tagVariables) {
-			List<String> needToRecord = new ArrayList<>();
+		for(String tagVariable : tagVariables){
 			JSONObject tagType = this.deviceData.getJSONObject(tagVariable);
 			@SuppressWarnings("unchecked")
 			Iterator<String> keys = tagType.keys();
@@ -968,12 +967,11 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				try {
 					boolean needToPlot = valueNode.getBoolean("scheduled");
 					if (needToPlot) {
-						needToRecord.add(key);
+					dataNeedToScheduled.add(key);
 					}
 				} catch (Exception e) {
 					// this is where the code fall if the "scheduled" is not available for the tag
 				}
-				dataNeedToScheduled.put(tagVariable, needToRecord);
 			}
 		}
 		System.out.println(dataNeedToScheduled);

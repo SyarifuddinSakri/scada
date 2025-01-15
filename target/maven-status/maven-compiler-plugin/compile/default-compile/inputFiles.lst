@@ -1,8 +1,8 @@
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/AppConfig.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/Entity/AlarmLog.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/Entity/RecordLog.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/ModbusApplication.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/ModbusDevice.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/ModbusDeviceTransaction.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/Repo/AlarmLogRepo.java
-/home/sy/Code/Java/SabahScada/src/main/java/com/sy/Modbus/Server.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/AppConfig.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/Entity/AlarmLog.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/Entity/RecordLog.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/ModbusApplication.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/ModbusDevice.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/ModbusDeviceTransaction.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/Repo/AlarmLogRepo.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/Server.java

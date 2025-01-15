@@ -1,6 +1,6 @@
 {
     "Yout_device_name1": {
-        "ipAddress": "192.168.0.1",
+        "ipAddress": "192.168.116.120",
         "portModbus": 502,
         "portWebSocket": 221,
         "diAddr": {
@@ -22,17 +22,17 @@
         },
         "aiAddr": {
             "tank1": {
-                "Address": 1280,
-                "min":20,
-                "max":27000,
+                "Address": 22016,
+                "min": 20,
+                "max": 50,
                 "ifMin": "Almost empty!",
                 "ifMax": "Full!",
-                "scheduled":true
+                "scheduled": true
             },
             "tank2": {
                 "Address": 1281,
-                "min":23,
-                "max":27000,
+                "min": 23,
+                "max": 27000,
                 "ifMin": "Almost empty!",
                 "ifMax": "Full!"
             }
@@ -42,12 +42,12 @@
                 "Address": 22028,
                 "ifMin": null,
                 "ifMax": null,
-                "scheduled":true
+                "scheduled": true
             },
             "CurrentOutput": {
                 "Address": 22020,
-                "min":2,
-                "max":30,
+                "min": 2,
+                "max": 30,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
             },
@@ -151,7 +151,7 @@
                 "Address": 22022,
                 "ifMin": "Voltage hit the lower threshold",
                 "ifMax": "Voltage hit the upper threshold",
-                "scheduled":true
+                "scheduled": true
             }
         },
         "aiSAddr": {
@@ -226,15 +226,15 @@
         "aiAddr": {
             "tank1": {
                 "Address": 1280,
-                "min":20,
-                "max":27000,
+                "min": 20,
+                "max": 27000,
                 "ifMin": "Almost empty!",
                 "ifMax": "Full!"
             },
             "tank2": {
                 "Address": 1281,
-                "min":23,
-                "max":27000,
+                "min": 23,
+                "max": 27000,
                 "ifMin": "Almost empty!",
                 "ifMax": "Full!"
             }
@@ -247,8 +247,8 @@
             },
             "CurrentOutput": {
                 "Address": 22020,
-                "min":2,
-                "max":30,
+                "min": 2,
+                "max": 30,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
             },
