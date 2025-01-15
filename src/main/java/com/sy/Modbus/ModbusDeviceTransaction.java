@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
@@ -955,9 +954,9 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 	private ArrayList<String> processNeedToRecordAnalog() throws JSONException {
 		ArrayList<String> dataNeedToScheduled = new ArrayList<>();
-		String tagVariables[] = {"aiAddr", "ai32Addr", "aiSAddr"};
+		String tagVariables[] = { "aiAddr", "ai32Addr", "aiSAddr" };
 
-		for(String tagVariable : tagVariables){
+		for (String tagVariable : tagVariables) {
 			JSONObject tagType = this.deviceData.getJSONObject(tagVariable);
 			@SuppressWarnings("unchecked")
 			Iterator<String> keys = tagType.keys();
@@ -967,7 +966,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				try {
 					boolean needToPlot = valueNode.getBoolean("scheduled");
 					if (needToPlot) {
-					dataNeedToScheduled.add(key);
+						dataNeedToScheduled.add(key);
 					}
 				} catch (Exception e) {
 					// this is where the code fall if the "scheduled" is not available for the tag
