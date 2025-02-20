@@ -1,6 +1,5 @@
 package com.sy.Modbus.Entity;
 
-
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
@@ -14,19 +13,20 @@ public class RecordLog {
 	@Column(updatable = false) // Prevent updates to Genereated Date
 	private LocalDateTime createdDate;
 
-	public LocalDateTime getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(LocalDateTime createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	@Column
 	private String tagName;
 
 	@Column
 	private String data;
+
+	@PrePersist
+	protected void onCreate() {
+		this.createdDate = LocalDateTime.now();
+	}
+
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
 
 	public String getTagName() {
 		return tagName;
@@ -36,9 +36,8 @@ public class RecordLog {
 		this.tagName = tagName;
 	}
 
-	@PrePersist
-	protected void onCreate(){
-		this.createdDate = LocalDateTime.now();
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public String getData() {

@@ -1,5 +1,7 @@
 package com.sy.Modbus.Entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,22 @@ public class AlarmLog {
 
 	@Column
 	private String event;
+
+	@Column(updatable = false)
+	private LocalDateTime logDate;
+
+	public LocalDateTime getLogDate() {
+		return logDate;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.logDate = LocalDateTime.now();
+	}
+
+	public void setLogDate(LocalDateTime logDate) {
+		this.logDate = logDate;
+	}
 
 	public long getId() {
 		return id;

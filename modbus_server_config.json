@@ -30,7 +30,8 @@
                 "max": 30,
                 "ifMin": null,
                 "ifMax": "UPS Temperature High",
-                "ifNormal": "UPS Temperature Normal"
+                "ifNormal": "UPS Temperature Normal",
+                "scheduled":true
             }
         },
         "aiSAddr": {},

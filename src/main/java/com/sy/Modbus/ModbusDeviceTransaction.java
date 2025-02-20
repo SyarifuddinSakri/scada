@@ -128,7 +128,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	public void start() {
 		putAllAddressAlarm();
 		System.out.println(getTime() + deviceName + " is starting.");
-		writeLog(getTime() + deviceName + " is starting.");
+		writeLog(deviceName + " is starting.");
 		super.start();
 		timerTask();
 	}
@@ -170,7 +170,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				valueDigital = arg1Obj.getBoolean("value");
 				System.out.println(getTime() + arg0.getRemoteSocketAddress().getAddress().getHostName() + " Wrote "
 						+ valueDigital + " to address " + address);
-				writeLog(getTime() + arg0.getRemoteSocketAddress().getAddress().getHostName() + " Wrote " + valueDigital
+				writeLog(arg0.getRemoteSocketAddress().getAddress().getHostName() + " Wrote " + valueDigital
 						+ " to address " + address);
 				writeCoil.put(address, valueDigital);
 			} else if (action.equalsIgnoreCase("analog")) {// if sending analog data to device is needed, enable this
@@ -200,7 +200,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 					alive();
 				} catch (IOException e) {
 					System.out.println(getTime() + deviceName + " is Unreachable");
-					writeLog(getTime() + deviceName + " is Unreachable");
+					writeLog(deviceName + " is Unreachable");
 				}
 			}
 		};
@@ -218,7 +218,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 						if (isAlive && (connection == null)) {
 							if (allowConnErrorWrite) {
 								// System.out.println(getTime()+"Communication to "+deviceName+" has changed");
-								// writeLog(getTime()+deviceName+"Communication to "+deviceName+" has changed");
+								// writeLog(deviceName+"Communication to "+deviceName+" has changed");
 								allowConnErrorWrite = false;
 							}
 							connect();
@@ -271,7 +271,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 						connection = null;
 						if (allowConnRefuseWrite) {
 							System.out.println(getTime() + deviceName + " " + e.getMessage());
-							writeLog(getTime() + deviceName + " " + e.getMessage());
+							writeLog(deviceName + " " + e.getMessage());
 							allowConnRefuseWrite = false;
 						}
 						// System.out.println(e.getMessage());
@@ -294,11 +294,11 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		isAlive = address.isReachable(10000);
 		if (!isAlive && allowWritePing) {
 			System.out.println(getTime() + deviceName + " is Unreachable");
-			writeLog(getTime() + deviceName + " is Unreachable");
+			writeLog(deviceName + " is Unreachable");
 			allowWritePing = false;
 		} else if (isAlive & !allowWritePing) {
 			System.out.println(getTime() + deviceName + " is Reachable");
-			writeLog(getTime() + deviceName + " is Reachable");
+			writeLog(deviceName + " is Reachable");
 			allowWritePing = true;
 		}
 	}
@@ -309,7 +309,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		connection.connect();
 		connection.setTimeout(5000);
 		System.out.println(getTime() + "Connected to : " + deviceName);
-		writeLog(getTime() + "Connected to : " + deviceName);
+		writeLog("Connected to : " + deviceName);
 		allowConnRefuseWrite = true;
 	}
 
@@ -340,10 +340,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + diAddr.get(key)
-											+ " \t named \"" + key + "\"\t is not available in the device : " + ipAddr
+											+ " named \"" + key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Digital Address" + e.getMessage());
-									writeLog(getTime() + "Warning, the address " + diAddr.get(key) + " \t named \""
-											+ key + "\"\t is not available in the device : " + ipAddr
+									writeLog("Warning, the address " + diAddr.get(key) + "  named \""
+											+ key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Digital Address" + e.getMessage());
 									notAvail.put(key, diAddr.get(key));
 									diAddr.remove(key);
@@ -384,10 +384,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + aiAddr.get(key)
-											+ "     \t named \"" + key + "\"\t is not available in the device : "
+											+ " named \"" + key + "\" is not available in the device : "
 											+ ipAddr + " Please check your Analog 16 bits Address");
-									writeLog(getTime() + "Warning, the address " + aiAddr.get(key) + "     \t named \""
-											+ key + "\"\t is not available in the device : " + ipAddr
+									writeLog("Warning, the address " + aiAddr.get(key) + " named \""
+											+ key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Analog 16 bits Address");
 									notAvail.put(key, aiAddr.get(key));
 									aiAddr.remove(key);
@@ -430,10 +430,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + ai32Addr.get(key)
-											+ "     \t named \"" + key + "\"\t is not available in the device : "
+											+ " named \"" + key + "\" is not available in the device : "
 											+ ipAddr + " Please check your Analog 32 bits Address");
-									writeLog(getTime() + "Warning, the address " + ai32Addr.get(key)
-											+ "     \t named \"" + key + "\"\t is not available in the device : "
+									writeLog("Warning, the address " + ai32Addr.get(key)
+											+ " named \"" + key + "\" is not available in the device : "
 											+ ipAddr + " Please check your Analog 32 bits Address");
 									notAvail.put(key, ai32Addr.get(key));
 									ai32Addr.remove(key);
@@ -474,10 +474,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + aiSAddr.get(key)
-											+ "     \t named \"" + key + "\"\t is not available in the device : "
+											+ " named \"" + key + "\" is not available in the device : "
 											+ ipAddr + " Please check your Analog 16 bits Signed Address");
-									writeLog(getTime() + "Warning, the address " + aiSAddr.get(key) + "     \t named \""
-											+ key + "\"\t is not available in the device : " + ipAddr
+									writeLog("Warning, the address " + aiSAddr.get(key) + " named \""
+											+ key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Analog 16 Signed bits Address");
 									notAvail.put(key, aiSAddr.get(key));
 									aiSAddr.remove(key);
@@ -517,11 +517,11 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + coilAddr.get(key)
-											+ "     \t named \"" + key
-											+ "\"\t is not available in the device. Please check your Read Coil Status Address");
-									writeLog(getTime() + "Warning, the address " + coilAddr.get(key)
-											+ "     \t named \"" + key
-											+ "\"\t is not available in the device. Please check your Read Coil Status Address");
+											+ " named \"" + key
+											+ "\" is not available in the device. Please check your Read Coil Status Address");
+									writeLog("Warning, the address " + coilAddr.get(key)
+											+ " named \"" + key
+											+ "\" is not available in the device. Please check your Read Coil Status Address");
 									notAvail.put(key, coilAddr.get(key));
 									coilAddr.remove(key);
 								}
@@ -577,11 +577,11 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address "
-											+ textAddr.get(key).get("Address") + "     \t named \"" + key
-											+ "\"\t is not available in the device. Please check your Read Text Address");
-									writeLog(getTime() + "Warning, the address " + textAddr.get(key).get("Address")
-											+ "     \t named \"" + key
-											+ "\"\t is not available in the device. Please check your Read Text Address");
+											+ textAddr.get(key).get("Address") + " named \"" + key
+											+ "\" is not available in the device. Please check your Read Text Address");
+									writeLog("Warning, the address " + textAddr.get(key).get("Address")
+											+ " named \"" + key
+											+ "\" is not available in the device. Please check your Read Text Address");
 									notAvail.put(key, textAddr.get(key).get("Address"));
 									textAddr.remove(key);
 								}
@@ -625,10 +625,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + floatAddr.get(key)
-											+ " \t named \"" + key + "\"\t is not available in the device : " + ipAddr
+											+ " named \"" + key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Analog 32 bits Address");
-									writeLog(getTime() + "Warning, the address " + floatAddr.get(key) + " \t named \""
-											+ key + "\"\t is not available in the device : " + ipAddr
+									writeLog("Warning, the address " + floatAddr.get(key) + " named \""
+											+ key + "\" is not available in the device : " + ipAddr
 											+ " Please check your Analog 32 bits Address");
 									notAvail.put(key, floatAddr.get(key));
 									floatAddr.remove(key);
@@ -651,10 +651,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 			}
 		} catch (ModbusIOException e) {
 			System.out.println(getTime() + "Connection Failed : " + deviceName + " " + e.getMessage());
-			writeLog(getTime() + "Connection Failed : " + deviceName + " " + e.getMessage());
+			writeLog("Connection Failed : " + deviceName + " " + e.getMessage());
 			connection = null;
 		} catch (ModbusException e) {// failed during execution
-			writeLog(getTime() + "Failed during execution of the Modbus Transaction : " + e.getMessage());
+			writeLog("Failed during execution of the Modbus Transaction : " + e.getMessage());
 			System.out.println(getTime() + "Failed during execution of the Modbus Transaction : " + e.getMessage());
 		} catch (ConcurrentModificationException e) {// this error occurs when we tried to remove the addresses from
 			// HashMap and try using the HashMap to loop at the same time
@@ -756,7 +756,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 	public void alarmFloat(String key, Float currentValue) {
 		if (!oldFloat.containsKey(key)) {
-			oldFloat.put(key, currentValue);
+			oldFloat.put(key, round(currentValue, 5));
 		} else {
 			if (!(Float.compare(oldFloat.get(key), currentValue) == 0)) {
 				oldFloat.replace(key, round(currentValue, 5));
@@ -786,25 +786,25 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 			permit.release();
 		} catch (Exception e) {
 			System.out.println(getTime() + "Cannot write " + e.getMessage());
-			writeLog(getTime() + "Cannot write " + e.getMessage());
+			writeLog("Cannot write " + e.getMessage());
 			permit.release();
 		}
 	}
 
 	protected void diAlarmFormat(boolean currentValue, String ifTrue, String ifFalse) {
 		if (currentValue) {
-			writeLog(getTime() + ifTrue);
+			writeLog(ifTrue);
 		} else {
-			writeLog(getTime() + ifFalse);
+			writeLog(ifFalse);
 		}
 	}
 
 	protected void aiAlarmFormat(String alarm) {
-		writeLog(getTime() + alarm);
+		writeLog(alarm);
 	}
 
 	protected void textAlarmFormat(String key, String text) {
-		writeLog(getTime() + key + " changed to : " + text);
+		writeLog(key + " changed to : " + text);
 	}
 
 	private void putAllAddressAlarm() {
@@ -832,7 +832,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				digitalAlarmTextIfFalse = processTextNode(deviceData.getJSONObject("diAddr"), "ifFalse");
 				digitalAlarmTextIfTrue = processTextNode(deviceData.getJSONObject("diAddr"), "ifTrue");
 
-				//for analog 16 bits, 16 signed and 32 bits value ifMin, ifMax and ifNormal
+				// for analog 16 bits, 16 signed and 32 bits value ifMin, ifMax and ifNormal
 				analogAlarmTextIfMin = processTextNode(deviceData.getJSONObject("aiAddr"), "ifMin");
 				analogAlarmTextIfMax = processTextNode(deviceData.getJSONObject("aiAddr"), "ifMax");
 				analogAlarmTextIfNormal = processTextNode(deviceData.getJSONObject("aiAddr"), "ifNormal");
@@ -845,7 +845,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				analogAlarmTextIfMax.putAll(processTextNode(deviceData.getJSONObject("aiSAddr"), "ifMax"));
 				analogAlarmTextIfNormal.putAll(processTextNode(deviceData.getJSONObject("aiSAddr"), "ifNormal"));
 
-				//for Float ifMin, ifMax and ifNormal
+				// for Float ifMin, ifMax and ifNormal
 				floatAlarmTextIfMin = processTextNode(deviceData.getJSONObject("floatAddr"), "ifMin");
 				floatAlarmTextIfMax = processTextNode(deviceData.getJSONObject("floatAddr"), "ifMax");
 				floatAlarmTextIfNormal = processTextNode(deviceData.getJSONObject("floatAddr"), "ifNormal");
@@ -966,9 +966,9 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 	private ArrayList<String> processNeedToRecordAnalog() throws JSONException {
 		ArrayList<String> dataNeedToScheduled = new ArrayList<>();
-		String tagVariables[] = {"aiAddr", "ai32Addr", "aiSAddr"};
+		String tagVariables[] = { "aiAddr", "ai32Addr", "aiSAddr" };
 
-		for(String tagVariable : tagVariables){
+		for (String tagVariable : tagVariables) {
 			JSONObject tagType = this.deviceData.getJSONObject(tagVariable);
 			@SuppressWarnings("unchecked")
 			Iterator<String> keys = tagType.keys();
@@ -978,7 +978,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				try {
 					boolean needToPlot = valueNode.getBoolean("scheduled");
 					if (needToPlot) {
-					dataNeedToScheduled.add(key);
+						dataNeedToScheduled.add(key);
 					}
 				} catch (Exception e) {
 					// this is where the code fall if the "scheduled" is not available for the tag

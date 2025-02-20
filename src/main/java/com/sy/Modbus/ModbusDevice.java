@@ -30,8 +30,10 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 	ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	@Autowired
-	public ModbusDevice(String deviceName, JSONObject deviceData, AlarmLogRepo alarmLogRepo) throws JSONException {
+	public ModbusDevice(String deviceName, JSONObject deviceData, AlarmLogRepo alarmLogRepo, RecordLogRepo recordLogRepo)
+			throws JSONException {
 		super(deviceName, deviceData, alarmLogRepo);
+		this.recordLogRepo = recordLogRepo;
 		samplingAnalog(scheduler);
 
 	}
@@ -55,14 +57,15 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 			Integer lowerLimit = analogTrigThresholdMin.get(key);
 			Integer upperLimit = analogTrigThresholdMax.get(key);
 
-			if (lowerLimit!=null && currentValue < lowerLimit && analogAllowWrite.get(key)) {
+			if (lowerLimit != null && currentValue < lowerLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
 				writeLog(getTime() + analogAlarmTextIfMin.get(key));
-			} else if (upperLimit!=null && currentValue > upperLimit && analogAllowWrite.get(key)) {
+			} else if (upperLimit != null && currentValue > upperLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
 				writeLog(getTime() + analogAlarmTextIfMax.get(key));
-			} else if ((lowerLimit==null || currentValue > lowerLimit) && (upperLimit==null || currentValue < upperLimit) && !analogAllowWrite.get(key)) {
-				//reset allowing write for the analog alarm
+			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
+					&& !analogAllowWrite.get(key)) {
+				// reset allowing write for the analog alarm
 				analogAllowWrite.put(key, true);
 				writeLog(getTime() + analogAlarmTextIfNormal.get(key));
 			}
@@ -88,13 +91,14 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 			Float lowerLimit = floatTrigThresholdMin.get(key);
 			Float upperLimit = floatTrigThresholdMax.get(key);
 
-			if (lowerLimit!=null && currentValue < lowerLimit && floatAllowWrite.get(key)) {
+			if (lowerLimit != null && currentValue < lowerLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
 				writeLog(getTime() + floatAlarmTextIfMin.get(key));
-			} else if (upperLimit!=null && currentValue > upperLimit && floatAllowWrite.get(key)) {
+			} else if (upperLimit != null && currentValue > upperLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
 				writeLog(getTime() + floatAlarmTextIfMax.get(key));
-			} else if ((lowerLimit==null || currentValue > lowerLimit) && (upperLimit==null || currentValue < upperLimit) && !floatAllowWrite.get(key)) {
+			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
+					&& !floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, true);
 				writeLog(getTime() + floatAlarmTextIfNormal.get(key));
 			}
@@ -113,34 +117,35 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 		scheduler.schedule(() -> {
 			try {
 				this.wrAddrrPermit.acquire();
-					if (data.has("Analog") && !data.isNull("Analog")) {
-					//need to be casted into string as some error occurs if directly taken from JSONObject
+				if (data.has("Analog") && !data.isNull("Analog")) {
+					// need to be casted into string as some error occurs if directly taken from
+					// JSONObject
 					String dataString = data.toString();
 					JSONObject dataJson = new JSONObject(dataString);
 					JSONObject dataAnalog = dataJson.getJSONObject("Analog");
 
-					//loop through all the processNeedToRecord() return function in Transaction
-					for(String tag : tagNeedToRecordAnalog){
-						//Please make database transaction for the sampling Analog
-						System.out.println("This is tag : " + tag + " this is the value : "+ dataAnalog.get(tag));
+					// loop through all the processNeedToRecord() return function in Transaction
+					for (String tag : tagNeedToRecordAnalog) {
+						// Please make database transaction for the sampling Analog
+						System.out.println("This is tag : " + tag + " this is the value : " +
+								dataAnalog.get(tag));
+						System.out.println("Saving record " + tag);
 						RecordLog record = new RecordLog();
 						record.setData(dataAnalog.get(tag).toString());
 						record.setTagName(tag);
 						recordLogRepo.save(record);
+						System.out.println("Record saved " + tag + " " + dataAnalog.get(tag));
 					}
-					
-					}
+				}
 				this.wrAddrrPermit.release();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
 				this.wrAddrrPermit.release();
 				System.out.println("Cannot make sampling data " + e + deviceName);
-			}finally{
+			} finally {
 				this.wrAddrrPermit.release();
 			}
-
-			samplingAnalog(scheduler);
 		}, delay, TimeUnit.MILLISECONDS);
 	}
 }

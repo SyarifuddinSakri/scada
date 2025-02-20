@@ -22,11 +22,13 @@ public class Server {
 	private List<ModbusDevice> ModbusDevices = new ArrayList<>();
 	private AppConfig appConfig;
 	private AlarmLogRepo alarmLogRepo;
+	private RecordLogRepo recordLogRepo;
 
 	@Autowired
-	public Server(AppConfig appConfig, AlarmLogRepo alarmLogRepo) {
+	public Server(AppConfig appConfig, AlarmLogRepo alarmLogRepo, RecordLogRepo recordLogRepo) {
 		this.appConfig = appConfig;
 		this.alarmLogRepo = alarmLogRepo;
+		this.recordLogRepo = recordLogRepo;
 	}
 
 	public void init() {
@@ -44,7 +46,7 @@ public class Server {
 				JSONObject device = jsonObject.getJSONObject(deviceName);
 				String ipAddress = device.getString("ipAddress");
 				System.out.println("Device: " + deviceName + ", IP Address: " + ipAddress);
-				ModbusDevice modbusDevice = new ModbusDevice(deviceName, device, alarmLogRepo);
+				ModbusDevice modbusDevice = new ModbusDevice(deviceName, device, alarmLogRepo, recordLogRepo);
 				ModbusDevices.add(modbusDevice);
 			}
 
