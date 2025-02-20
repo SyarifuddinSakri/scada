@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.sy.Modbus.Repo.AlarmLogRepo;
+import com.sy.Modbus.Repo.RecordLogRepo;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -5,4 +5,5 @@
 /home/sy/Java/modbus/src/main/java/com/sy/Modbus/ModbusDevice.java
 /home/sy/Java/modbus/src/main/java/com/sy/Modbus/ModbusDeviceTransaction.java
 /home/sy/Java/modbus/src/main/java/com/sy/Modbus/Repo/AlarmLogRepo.java
+/home/sy/Java/modbus/src/main/java/com/sy/Modbus/Repo/RecordLogRepo.java
 /home/sy/Java/modbus/src/main/java/com/sy/Modbus/Server.java

@@ -6,7 +6,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.sy.Modbus.Entity.RecordLog;
 import com.sy.Modbus.Repo.AlarmLogRepo;
+import com.sy.Modbus.Repo.RecordLogRepo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,10 @@ import org.springframework.stereotype.Component;
 public class ModbusDevice extends ModbusDeviceTransaction {
 	@Autowired
 	Server server;
+	@Autowired
+	RecordLog recordLog;
+	@Autowired
+	RecordLogRepo recordLogRepo;
 	ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	@Autowired
@@ -117,6 +123,10 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 					for(String tag : tagNeedToRecordAnalog){
 						//Please make database transaction for the sampling Analog
 						System.out.println("This is tag : " + tag + " this is the value : "+ dataAnalog.get(tag));
+						RecordLog record = new RecordLog();
+						record.setData(dataAnalog.get(tag).toString());
+						record.setTagName(tag);
+						recordLogRepo.save(record);
 					}
 					
 					}
