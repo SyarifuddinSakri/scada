@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
@@ -88,11 +87,13 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	protected HashMap<String, Integer> analogTrigThresholdMax = new HashMap<>();
 	protected HashMap<String, String> analogAlarmTextIfMin = new HashMap<>();
 	protected HashMap<String, String> analogAlarmTextIfMax = new HashMap<>();
+	protected HashMap<String, String> analogAlarmTextIfNormal = new HashMap<>();
 	protected HashMap<String, Boolean> floatAllowWrite = new HashMap<>();
 	protected HashMap<String, Float> floatTrigThresholdMin = new HashMap<>();
 	protected HashMap<String, Float> floatTrigThresholdMax = new HashMap<>();
 	protected HashMap<String, String> floatAlarmTextIfMin = new HashMap<>();
 	protected HashMap<String, String> floatAlarmTextIfMax = new HashMap<>();
+	protected HashMap<String, String> floatAlarmTextIfNormal = new HashMap<>();
 	// ------------------------------------------------------misc--------------------------------
 	protected volatile boolean isAlive = false;
 	protected volatile boolean allowWritePing = true;
@@ -830,14 +831,24 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				// put all alarm for the all digital, analog and text
 				digitalAlarmTextIfFalse = processTextNode(deviceData.getJSONObject("diAddr"), "ifFalse");
 				digitalAlarmTextIfTrue = processTextNode(deviceData.getJSONObject("diAddr"), "ifTrue");
+
+				//for analog 16 bits, 16 signed and 32 bits value ifMin, ifMax and ifNormal
 				analogAlarmTextIfMin = processTextNode(deviceData.getJSONObject("aiAddr"), "ifMin");
 				analogAlarmTextIfMax = processTextNode(deviceData.getJSONObject("aiAddr"), "ifMax");
+				analogAlarmTextIfNormal = processTextNode(deviceData.getJSONObject("aiAddr"), "ifNormal");
+
 				analogAlarmTextIfMin.putAll(processTextNode(deviceData.getJSONObject("ai32Addr"), "ifMin"));
 				analogAlarmTextIfMax.putAll(processTextNode(deviceData.getJSONObject("ai32Addr"), "ifMax"));
+				analogAlarmTextIfNormal.putAll(processTextNode(deviceData.getJSONObject("ai32Addr"), "ifNormal"));
+
 				analogAlarmTextIfMin.putAll(processTextNode(deviceData.getJSONObject("aiSAddr"), "ifMin"));
 				analogAlarmTextIfMax.putAll(processTextNode(deviceData.getJSONObject("aiSAddr"), "ifMax"));
+				analogAlarmTextIfNormal.putAll(processTextNode(deviceData.getJSONObject("aiSAddr"), "ifNormal"));
+
+				//for Float ifMin, ifMax and ifNormal
 				floatAlarmTextIfMin = processTextNode(deviceData.getJSONObject("floatAddr"), "ifMin");
 				floatAlarmTextIfMax = processTextNode(deviceData.getJSONObject("floatAddr"), "ifMax");
+				floatAlarmTextIfNormal = processTextNode(deviceData.getJSONObject("floatAddr"), "ifNormal");
 
 				// put all Threshold for All analog
 				analogTrigThresholdMin = processIntegerNode(deviceData.getJSONObject("aiAddr"), "min");
@@ -990,7 +1001,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 	public abstract void onValueChangeDi(String key, boolean currentValue);
 
-	public abstract void onValueChangeAi(String key, int currentValue);
+	public abstract void onValueChangeAi(String key, Integer currentValue);
 
 	public abstract void onValueChangeText(String key, String currentValue);
 

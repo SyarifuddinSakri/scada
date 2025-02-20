@@ -2,7 +2,6 @@ package com.sy.Modbus;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,22 +44,24 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 	}
 
 	@Override
-	public void onValueChangeAi(String key, int currentValue) {
+	public void onValueChangeAi(String key, Integer currentValue) {
 		try {
-			int lowerLimit = analogTrigThresholdMin.get(key);
-			int upperLimit = analogTrigThresholdMax.get(key);
+			Integer lowerLimit = analogTrigThresholdMin.get(key);
+			Integer upperLimit = analogTrigThresholdMax.get(key);
 
-			if (currentValue < lowerLimit && analogAllowWrite.get(key)) {
+			if (lowerLimit!=null && currentValue < lowerLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
 				writeLog(getTime() + analogAlarmTextIfMin.get(key));
-			} else if (currentValue > upperLimit && analogAllowWrite.get(key)) {
+			} else if (upperLimit!=null && currentValue > upperLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
 				writeLog(getTime() + analogAlarmTextIfMax.get(key));
-			} else if (currentValue > lowerLimit && currentValue < upperLimit && !analogAllowWrite.get(key)) {
+			} else if ((lowerLimit==null || currentValue > lowerLimit) && (upperLimit==null || currentValue < upperLimit) && !analogAllowWrite.get(key)) {
+				//reset allowing write for the analog alarm
 				analogAllowWrite.put(key, true);
+				writeLog(getTime() + analogAlarmTextIfNormal.get(key));
 			}
 		} catch (Exception e) {
-
+			System.out.println("Exception occurs during checking the Analog alarm in onValueChangeAi method" + e);
 		}
 	}
 
@@ -78,17 +79,18 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 	@Override
 	public void onValueChangeFloat(String key, Float currentValue) {
 		try {
-			float lowerLimit = floatTrigThresholdMin.get(key);
-			float upperLimit = floatTrigThresholdMax.get(key);
+			Float lowerLimit = floatTrigThresholdMin.get(key);
+			Float upperLimit = floatTrigThresholdMax.get(key);
 
-			if (currentValue < lowerLimit && floatAllowWrite.get(key)) {
+			if (lowerLimit!=null && currentValue < lowerLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
 				writeLog(getTime() + floatAlarmTextIfMin.get(key));
-			} else if (currentValue > upperLimit && floatAllowWrite.get(key)) {
+			} else if (upperLimit!=null && currentValue > upperLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
 				writeLog(getTime() + floatAlarmTextIfMax.get(key));
-			} else if (currentValue > lowerLimit && currentValue < upperLimit && !floatAllowWrite.get(key)) {
+			} else if ((lowerLimit==null || currentValue > lowerLimit) && (upperLimit==null || currentValue < upperLimit) && !floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, true);
+				writeLog(getTime() + floatAlarmTextIfNormal.get(key));
 			}
 
 		} catch (Exception e) {
@@ -113,6 +115,7 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 					//loop through all the processNeedToRecord() return function in Transaction
 					for(String tag : tagNeedToRecordAnalog){
+						//Please make database transaction for the sampling Analog
 						System.out.println("This is tag : " + tag + " this is the value : "+ dataAnalog.get(tag));
 					}
 					
@@ -130,5 +133,4 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 			samplingAnalog(scheduler);
 		}, delay, TimeUnit.MILLISECONDS);
 	}
-
 }

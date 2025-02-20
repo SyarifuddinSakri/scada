@@ -1,70 +1,91 @@
 {
-    "Yout_device_name1": {
-        "ipAddress": "192.168.116.120",
+    "MCC": {
+        "ipAddress": "192.168.240.190",
         "portModbus": 502,
-        "portWebSocket": 221,
+        "portWebSocket": 240,
         "diAddr": {
-            "Hatch_Door": {
-                "Address": 1280,
-                "ifFalse": "Hatch Door is open",
-                "ifTrue": "Hatch Door is closed"
+            "eqRoomDoor": {
+                "Address": 1033,
+                "ifFalse": "Equipment room door open",
+                "ifTrue": "Equipment room door close"
             },
-            "Main_Door": {
-                "Address": 1281,
-                "ifFalse": "Main Door is open",
-                "ifTrue": "Hatch Door is closed"
+            "operationRoomDoor": {
+                "Address": 1032,
+                "ifFalse": "Operation room door open",
+                "ifTrue": "Operation room door close"
             },
-            "Dummy_Door": {
-                "Address": 1282,
-                "ifFalse": "Dummy Door is open",
-                "ifTrue": "Dummy Door is closed"
+            "upsSnmpValidity": {
+                "Address": 20481,
+                "ifFalse": "UPS SNMP reading is not valid",
+                "ifTrue": "UPS SNMP reading back to normal"
             }
         },
         "aiAddr": {
-            "tank1": {
-                "Address": 22016,
-                "min": 20,
-                "max": 50,
-                "ifMin": "Almost empty!",
-                "ifMax": "Full!",
-                "scheduled": true
+            "upsOutputCapacity": {
+                "Address": 20480
             },
-            "tank2": {
-                "Address": 1281,
-                "min": 23,
-                "max": 27000,
-                "ifMin": "Almost empty!",
-                "ifMax": "Full!"
+            "upsTemperature": {
+                "Address": 20489,
+                "min": null,
+                "max": 30,
+                "ifMin": null,
+                "ifMax": "UPS Temperature High",
+                "ifNormal": "UPS Temperature Normal"
             }
         },
+        "aiSAddr": {},
         "ai32Addr": {
             "UTCTime": {
-                "Address": 22028,
-                "ifMin": null,
-                "ifMax": null,
-                "scheduled": true
+                "Address": 22028
             },
-            "CurrentOutput": {
-                "Address": 22020,
-                "min": 2,
-                "max": 30,
-                "ifMin": "Current hit the lower threshold",
-                "ifMax": "Current hit the upper threshold"
+            "timeSrv01": {
+                "Address": 20482,
+                "min": 0,
+                "max": null,
+                "ifMin": "Server 01 Unreachable",
+                "ifNormal": "Server 01 Reachable"
             },
-            "Voltage": {
-                "Address": 22022
-            }
-        },
-        "aiSAddr": {
-            "CurrentOutput": {
-                "Address": 22020,
-                "ifMin": "Current hit the lower threshold",
-                "ifMax": "Current hit the upper threshold"
+            "timeSrv02": {
+                "Address": 20486,
+                "min": 0,
+                "max": null,
+                "ifMin": "Server 02 Unreachable",
+                "ifNormal": "Server 02 Reachable"
             },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
+            "timeArch01": {
+                "Address": 20496,
+                "min": 0,
+                "max": null,
+                "ifMin": "Archiving 01 Unreachable",
+                "ifNormal": "Archiving 01 Reachable"
+            },
+            "timeArch02": {
+                "Address": 20498,
+                "min": 0,
+                "max": null,
+                "ifMin": "Archiving 02 Unreachable",
+                "ifNormal": "Archiving 02 Reachable"
+            },
+            "timeDB01": {
+                "Address": 20500,
+                "min": 0,
+                "max": null,
+                "ifMin": "Database 01 is Unreachable",
+                "ifNormal": "Database 01 Reachable"
+            },
+            "timeDB02": {
+                "Address": 20502,
+                "min": 0,
+                "max": null,
+                "ifMin": "Database 02 is Unreachable",
+                "ifNormal": "Database 02 Reachable"
+            },
+            "timeTrainSrv": {
+                "Address": 20504,
+                "min": 0,
+                "max": null,
+                "ifMin": "Training server is Unreachable",
+                "ifNormal": "Training server Reachable"
             }
         },
         "coilAddr": {
@@ -91,19 +112,23 @@
             }
         },
         "floatAddr": {
-            "CurrentOutput": {
-                "Address": 22020,
-                "ifMin": "Current hit the lower threshold",
-                "ifMax": "Current hit the upper threshold"
+            "equipmentRoomTemp": {
+                "Address": 20616,
+                "max": 30,
+                "min": null,
+                "ifMin": "Lower Threshold",
+                "ifMax": "Equipment room temperature high"
             },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
+            "operationRoomTemp": {
+                "Address": 20702,
+                "max": 30,
+                "min": null,
+                "ifMin": "Lower Threshold",
+                "ifMax": "Operation room temperature high"
             }
         }
     },
-    "Your_device_name2": {
+    "RSSBLG": {
         "ipAddress": "192.168.0.100",
         "portModbus": 502,
         "portWebSocket": 222,
@@ -136,6 +161,13 @@
                 "ifMax": "Full!"
             }
         },
+        "aiSAddr": {
+            "CurrentOutput": {
+                "Address": 22020,
+                "ifMin": "Current hit the lower threshold",
+                "ifMax": "Current hit the upper threshold"
+            }
+        },
         "ai32Addr": {
             "UTCTime": {
                 "Address": 22028,
@@ -146,24 +178,6 @@
                 "Address": 22020,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold",
-                "scheduled": true
-            }
-        },
-        "aiSAddr": {
-            "CurrentOutput": {
-                "Address": 22020,
-                "ifMin": "Current hit the lower threshold",
-                "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
             }
         },
         "coilAddr": {
@@ -194,11 +208,6 @@
                 "Address": 22020,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
             }
         }
     },
@@ -239,6 +248,13 @@
                 "ifMax": "Full!"
             }
         },
+        "aiSAddr": {
+            "CurrentOutput": {
+                "Address": 22020,
+                "ifMin": "Current hit the lower threshold",
+                "ifMax": "Current hit the upper threshold"
+            }
+        },
         "ai32Addr": {
             "UTCTime": {
                 "Address": 22028,
@@ -251,21 +267,6 @@
                 "max": 30,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022
-            }
-        },
-        "aiSAddr": {
-            "CurrentOutput": {
-                "Address": 22020,
-                "ifMin": "Current hit the lower threshold",
-                "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
             }
         },
         "coilAddr": {
@@ -296,12 +297,7 @@
                 "Address": 22020,
                 "ifMin": "Current hit the lower threshold",
                 "ifMax": "Current hit the upper threshold"
-            },
-            "Voltage": {
-                "Address": 22022,
-                "ifMin": "Voltage hit the lower threshold",
-                "ifMax": "Voltage hit the upper threshold"
             }
         }
-    },
+    }
 }

@@ -1,0 +1,5 @@
+1. diAddr - to read Discrete data, typically a boolean value that is read-only (size is 1 bit)
+2. aiAddr - to read Input Register data, typically a data with unsigned value (size of 16 bits)
+3. aiSAddr - to read Input Register data, typicall a data with signed value (size of 16 bits)
+4. ai32Addr - to make twice the length of Input Register data request (since modbus does not support 32 bits data transaction and natively uses 16 bits per transaction), Input Register request will be made twice to accomodate the length data for 32 bits. This can be used to read both 32 bits signed and unsigned value.
+5. coilAddr - to read Coil address status. Almost the same like "diAddr", but it is designed for the address that can be write. (size is 1 bit)
