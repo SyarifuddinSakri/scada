@@ -17,12 +17,13 @@
             "upsSnmpValidity": {
                 "Address": 20481,
                 "ifFalse": "UPS SNMP reading is not valid",
-                "ifTrue": "UPS SNMP reading back to normal"
+                "ifTrue": "UPS SNMP reading is now valid"
             }
         },
         "aiAddr": {
             "upsOutputCapacity": {
-                "Address": 20480
+                "Address": 20480,
+                "scheduled": true
             },
             "upsTemperature": {
                 "Address": 20489,

@@ -42,11 +42,11 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 	public void onValueChangeDi(String key, boolean currentValue) {
 		if (currentValue) {
 			if (digitalAlarmTextIfTrue.containsKey(key)) {
-				writeLog(getTime() + digitalAlarmTextIfTrue.get(key));
+				writeLog(digitalAlarmTextIfTrue.get(key));
 			}
 		} else {
 			if (digitalAlarmTextIfFalse.containsKey(key)) {
-				writeLog(getTime() + digitalAlarmTextIfFalse.get(key));
+				writeLog(digitalAlarmTextIfFalse.get(key));
 			}
 		}
 	}
@@ -59,15 +59,15 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 			if (lowerLimit != null && currentValue < lowerLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
-				writeLog(getTime() + analogAlarmTextIfMin.get(key));
+				writeLog(analogAlarmTextIfMin.get(key));
 			} else if (upperLimit != null && currentValue > upperLimit && analogAllowWrite.get(key)) {
 				analogAllowWrite.put(key, false);
-				writeLog(getTime() + analogAlarmTextIfMax.get(key));
+				writeLog(analogAlarmTextIfMax.get(key));
 			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
 					&& !analogAllowWrite.get(key)) {
 				// reset allowing write for the analog alarm
 				analogAllowWrite.put(key, true);
-				writeLog(getTime() + analogAlarmTextIfNormal.get(key));
+				writeLog(analogAlarmTextIfNormal.get(key));
 			}
 		} catch (Exception e) {
 			System.out.println("Exception occurs during checking the Analog alarm in onValueChangeAi method" + e);
@@ -93,14 +93,14 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 			if (lowerLimit != null && currentValue < lowerLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
-				writeLog(getTime() + floatAlarmTextIfMin.get(key));
+				writeLog(floatAlarmTextIfMin.get(key));
 			} else if (upperLimit != null && currentValue > upperLimit && floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, false);
-				writeLog(getTime() + floatAlarmTextIfMax.get(key));
+				writeLog(floatAlarmTextIfMax.get(key));
 			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
 					&& !floatAllowWrite.get(key)) {
 				floatAllowWrite.put(key, true);
-				writeLog(getTime() + floatAlarmTextIfNormal.get(key));
+				writeLog(floatAlarmTextIfNormal.get(key));
 			}
 
 		} catch (Exception e) {
@@ -110,8 +110,8 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 	protected void samplingAnalog(ScheduledExecutorService scheduler) {
 		LocalDateTime now = LocalDateTime.now();
-		// LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-		LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+		LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+		// LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
 		long delay = now.until(nextHour, ChronoUnit.MILLIS);
 
 		scheduler.schedule(() -> {

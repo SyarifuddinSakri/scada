@@ -1,4 +1,5 @@
 /home/kkm_scadapc/scada_project/java/src/main/java/com/sy/Modbus/AppConfig.java
+/home/kkm_scadapc/scada_project/java/src/main/java/com/sy/Modbus/Controller/MainController.java
 /home/kkm_scadapc/scada_project/java/src/main/java/com/sy/Modbus/Entity/AlarmLog.java
 /home/kkm_scadapc/scada_project/java/src/main/java/com/sy/Modbus/Entity/RecordLog.java
 /home/kkm_scadapc/scada_project/java/src/main/java/com/sy/Modbus/ModbusApplication.java
