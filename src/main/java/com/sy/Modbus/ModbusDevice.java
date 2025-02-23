@@ -28,6 +28,7 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 	@Autowired
 	RecordLogRepo recordLogRepo;
 	ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
 
 	@Autowired
 	public ModbusDevice(String deviceName, JSONObject deviceData, AlarmLogRepo alarmLogRepo, RecordLogRepo recordLogRepo)
@@ -35,6 +36,7 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 		super(deviceName, deviceData, alarmLogRepo);
 		this.recordLogRepo = recordLogRepo;
 		samplingAnalog(scheduler);
+		samplingFloat(scheduler2);
 
 	}
 
@@ -127,14 +129,11 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 					// loop through all the processNeedToRecord() return function in Transaction
 					for (String tag : tagNeedToRecordAnalog) {
 						// Please make database transaction for the sampling Analog
-						System.out.println("This is tag : " + tag + " this is the value : " +
-								dataAnalog.get(tag));
-						System.out.println("Saving record " + tag);
 						RecordLog record = new RecordLog();
 						record.setData(dataAnalog.get(tag).toString());
 						record.setTagName(tag);
+						record.setSiteName(this.deviceName);
 						recordLogRepo.save(record);
-						System.out.println("Record saved " + tag + " " + dataAnalog.get(tag));
 					}
 				}
 				this.wrAddrrPermit.release();
@@ -142,7 +141,43 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 				e.printStackTrace();
 			} catch (JSONException e) {
 				this.wrAddrrPermit.release();
-				System.out.println("Cannot make sampling data " + e + deviceName);
+			} finally {
+				this.wrAddrrPermit.release();
+			}
+		}, delay, TimeUnit.MILLISECONDS);
+	}
+
+	protected void samplingFloat(ScheduledExecutorService scheduler) {
+		LocalDateTime now = LocalDateTime.now();
+		// LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+		LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+		long delay = now.until(nextHour, ChronoUnit.MILLIS);
+
+		scheduler.schedule(() -> {
+			try {
+				this.wrAddrrPermit.acquire();
+				if (data.has("Float") && !data.isNull("Float")) {
+					// need to be casted into string as some error occurs if directly taken from
+					// JSONObject
+					String dataString = data.toString();
+					JSONObject dataJson = new JSONObject(dataString);
+					JSONObject dataFloat = dataJson.getJSONObject("Float");
+
+					// loop through all the processNeedToRecord() return function in Transaction
+					for (String tag : tagNeedToRecordFloat) {
+						// Please make database transaction for the sampling Analog
+						RecordLog record = new RecordLog();
+						record.setData(dataFloat.get(tag).toString());
+						record.setTagName(tag);
+						record.setSiteName(this.deviceName);
+						recordLogRepo.save(record);
+					}
+				}
+				this.wrAddrrPermit.release();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				this.wrAddrrPermit.release();
 			} finally {
 				this.wrAddrrPermit.release();
 			}

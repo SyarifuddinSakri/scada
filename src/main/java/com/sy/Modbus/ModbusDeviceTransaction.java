@@ -58,6 +58,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	// -------------------------------------address that will be executed to record
 	// the data------------------------
 	protected ArrayList<String> tagNeedToRecordAnalog = new ArrayList<>();
+	protected ArrayList<String> tagNeedToRecordFloat = new ArrayList<>();
 	// ----------------------------------------------output----------------------------
 	protected HashMap<String, Boolean> outputDi = new HashMap<>();
 	protected HashMap<String, Integer> outputAi = new HashMap<>();
@@ -870,6 +871,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				floatAllowWrite = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
 
 				this.tagNeedToRecordAnalog = processNeedToRecordAnalog();
+				this.tagNeedToRecordFloat = processNeedToRecordFloat();
 
 			} catch (JSONException e) {
 				System.out.println("Error in reading the Alarm Data" + e.getMessage());
@@ -983,6 +985,28 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				} catch (Exception e) {
 					// this is where the code fall if the "scheduled" is not available for the tag
 				}
+			}
+		}
+		System.out.println(dataNeedToScheduled);
+		return dataNeedToScheduled;
+	}
+
+	private ArrayList<String> processNeedToRecordFloat() throws JSONException {
+		ArrayList<String> dataNeedToScheduled = new ArrayList<>();
+
+		JSONObject tagType = this.deviceData.getJSONObject("floatAddr");
+		@SuppressWarnings("unchecked")
+		Iterator<String> keys = tagType.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject valueNode = tagType.getJSONObject(key);
+			try {
+				boolean needToPlot = valueNode.getBoolean("scheduled");
+				if (needToPlot) {
+					dataNeedToScheduled.add(key);
+				}
+			} catch (Exception e) {
+				// this is where the code fall if the "scheduled" is not available for the tag
 			}
 		}
 		System.out.println(dataNeedToScheduled);

@@ -15,4 +15,6 @@ public interface RecordLogRepo extends JpaRepository<RecordLog, Long> {
 	@Transactional
 	List<RecordLog> findBySiteName(String siteName);
 
+	// Search by siteName, tag and date Range
+
 }

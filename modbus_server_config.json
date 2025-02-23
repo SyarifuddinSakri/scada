@@ -119,7 +119,8 @@
                 "max": 30,
                 "min": null,
                 "ifMin": "Lower Threshold",
-                "ifMax": "Equipment room temperature high"
+                "ifMax": "Equipment room temperature high",
+                "scheduled": true
             },
             "operationRoomTemp": {
                 "Address": 20702,
