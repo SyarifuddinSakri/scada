@@ -1,6 +1,9 @@
 package com.sy.Modbus.Repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import jakarta.transaction.Transactional;
@@ -18,5 +21,10 @@ public interface AlarmLogRepo extends JpaRepository<AlarmLog, Long> {
 
 	// Search by siteName and date Range
 	List<AlarmLog> findBySiteNameAndLogDateBetween(String siteName, LocalDateTime startDate, LocalDateTime endDate);
+
+	@Transactional
+	@Modifying
+	@Query("DELETE FROM RecordLog r WHERE r.createdDate < :cutoffDate")
+	void deleteOlderThanTwoMonths(@Param("cutoffDate") LocalDateTime cutoffDate);
 
 }

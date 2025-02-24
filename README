@@ -19,3 +19,18 @@ ifMix - text to record in Database of the tag value is below "min" value
 ifMax - text to record in Database of the tag value is above "max" value
 ifNormal - text to record in Database if the tag is the tag is above min and/or below max
 scheduled - true/false value. If true, the tag will be set to be recorded in Database on every 1 hour
+
+
+-------------------------------------------------------------------Data format to front end.-----------------------------------------
+For the first handshake with webSocket to the front end, ALL data for every valid tag will be sent.
+Data will be sent to the front end using webSocket protocol with the given port number of the websocket for each device.
+ This port is defined by user in "modbus_server_config.json" under "portWebScoket". These are three examples of socket data that sent to the connected front end at 3 different interval. Each data is sent to the front end for each interval when there is any changes to the data of defined tag.
+-------------------------------------------------------------------------------------------------------------------------------------------
+{"Float":{"equipmentRoomTemp":22.7}}
+{"Analog":{"UTCTime":1740385080,"timeTrainSrv":3,"timeSrv02":5,"timeArch01":4,"timeDB01":6,"timeArch02":2,"timeDB02":3,"timeSrv01":4}}
+{"Float":{"equipmentRoomTemp":22.8},"Analog":{"UTCTime":1740385081}}
+--------------------------------------------------------------------------------------------------------------------------------------------
+ 1. from example above, "Float" data with the name of "equipmentRoomTemp" has change, and it is sent to the front End only that packet -> {"Float":{"equipmentRoomTemp":22.7}}
+ 2. The second packet, "Analog" data with a lot of tag has changes "UTCTime", "timeTrainServ", "timeSrv02" etc...... has changed simulataneously, then all the data is sent together as single packet.
+ 3. Last example is showing "Float" and "Analog" data has change simultaneously, and it is seperated by JSON format. Everything is sent in JSON format.
+

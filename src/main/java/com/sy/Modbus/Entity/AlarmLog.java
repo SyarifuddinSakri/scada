@@ -14,6 +14,9 @@ public class AlarmLog {
 	private String siteName;
 
 	@Column
+	private String tagName;
+
+	@Column
 	private String event;
 
 	@Column(updatable = false)
@@ -38,6 +41,14 @@ public class AlarmLog {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getTagName() {
+		return tagName;
+	}
+
+	public void setTagName(String tagName) {
+		this.tagName = tagName;
 	}
 
 	public String getEvent() {

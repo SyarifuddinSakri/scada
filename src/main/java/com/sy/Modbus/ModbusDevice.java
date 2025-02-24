@@ -59,16 +59,23 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 			Integer lowerLimit = analogTrigThresholdMin.get(key);
 			Integer upperLimit = analogTrigThresholdMax.get(key);
 
-			if (lowerLimit != null && currentValue < lowerLimit && analogAllowWrite.get(key)) {
-				analogAllowWrite.put(key, false);
+			if (lowerLimit != null && currentValue < lowerLimit && analogAllowWriteLow.get(key)) {
+				analogAllowWriteLow.put(key, false);
+				analogAllowWriteHigh.put(key, true);
+				analogAllowWriteNorm.put(key, true);
 				writeLog(analogAlarmTextIfMin.get(key));
-			} else if (upperLimit != null && currentValue > upperLimit && analogAllowWrite.get(key)) {
-				analogAllowWrite.put(key, false);
+			} else if (upperLimit != null && currentValue > upperLimit && analogAllowWriteHigh.get(key)) {
+				analogAllowWriteLow.put(key, true);
+				analogAllowWriteHigh.put(key, false);
+				analogAllowWriteNorm.put(key, true);
 				writeLog(analogAlarmTextIfMax.get(key));
-			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
-					&& !analogAllowWrite.get(key)) {
+			} else if ((lowerLimit == null || currentValue >= lowerLimit)
+					&& (upperLimit == null || currentValue <= upperLimit)
+					&& analogAllowWriteNorm.get(key)) {
 				// reset allowing write for the analog alarm
-				analogAllowWrite.put(key, true);
+				analogAllowWriteLow.put(key, true);
+				analogAllowWriteHigh.put(key, true);
+				analogAllowWriteNorm.put(key, false);
 				writeLog(analogAlarmTextIfNormal.get(key));
 			}
 		} catch (Exception e) {
@@ -93,15 +100,22 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 			Float lowerLimit = floatTrigThresholdMin.get(key);
 			Float upperLimit = floatTrigThresholdMax.get(key);
 
-			if (lowerLimit != null && currentValue < lowerLimit && floatAllowWrite.get(key)) {
-				floatAllowWrite.put(key, false);
+			if (lowerLimit != null && currentValue < lowerLimit && floatAllowWriteLow.get(key)) {
+				floatAllowWriteLow.put(key, false);
+				floatAllowWriteHigh.put(key, true);
+				floatAllowWriteNorm.put(key, true);
 				writeLog(floatAlarmTextIfMin.get(key));
-			} else if (upperLimit != null && currentValue > upperLimit && floatAllowWrite.get(key)) {
-				floatAllowWrite.put(key, false);
+			} else if (upperLimit != null && currentValue > upperLimit && floatAllowWriteHigh.get(key)) {
+				floatAllowWriteLow.put(key, true);
+				floatAllowWriteHigh.put(key, false);
+				floatAllowWriteNorm.put(key, true);
 				writeLog(floatAlarmTextIfMax.get(key));
-			} else if ((lowerLimit == null || currentValue > lowerLimit) && (upperLimit == null || currentValue < upperLimit)
-					&& !floatAllowWrite.get(key)) {
-				floatAllowWrite.put(key, true);
+			} else if ((lowerLimit == null || currentValue >= lowerLimit)
+					&& (upperLimit == null || currentValue <= upperLimit)
+					&& floatAllowWriteNorm.get(key)) {
+				floatAllowWriteLow.put(key, true);
+				floatAllowWriteHigh.put(key, true);
+				floatAllowWriteNorm.put(key, false);
 				writeLog(floatAlarmTextIfNormal.get(key));
 			}
 
@@ -149,8 +163,8 @@ public class ModbusDevice extends ModbusDeviceTransaction {
 
 	protected void samplingFloat(ScheduledExecutorService scheduler) {
 		LocalDateTime now = LocalDateTime.now();
-		// LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-		LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+		LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+		// LocalDateTime nextHour = now.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
 		long delay = now.until(nextHour, ChronoUnit.MILLIS);
 
 		scheduler.schedule(() -> {

@@ -83,13 +83,17 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 	// Threshold-------------------
 	protected HashMap<String, String> digitalAlarmTextIfFalse = new HashMap<>();
 	protected HashMap<String, String> digitalAlarmTextIfTrue = new HashMap<>();
-	protected HashMap<String, Boolean> analogAllowWrite = new HashMap<>();
+	protected HashMap<String, Boolean> analogAllowWriteLow = new HashMap<>();
+	protected HashMap<String, Boolean> analogAllowWriteHigh = new HashMap<>();
+	protected HashMap<String, Boolean> analogAllowWriteNorm = new HashMap<>();
 	protected HashMap<String, Integer> analogTrigThresholdMin = new HashMap<>();
 	protected HashMap<String, Integer> analogTrigThresholdMax = new HashMap<>();
 	protected HashMap<String, String> analogAlarmTextIfMin = new HashMap<>();
 	protected HashMap<String, String> analogAlarmTextIfMax = new HashMap<>();
 	protected HashMap<String, String> analogAlarmTextIfNormal = new HashMap<>();
-	protected HashMap<String, Boolean> floatAllowWrite = new HashMap<>();
+	protected HashMap<String, Boolean> floatAllowWriteLow = new HashMap<>();
+	protected HashMap<String, Boolean> floatAllowWriteHigh = new HashMap<>();
+	protected HashMap<String, Boolean> floatAllowWriteNorm = new HashMap<>();
 	protected HashMap<String, Float> floatTrigThresholdMin = new HashMap<>();
 	protected HashMap<String, Float> floatTrigThresholdMax = new HashMap<>();
 	protected HashMap<String, String> floatAlarmTextIfMin = new HashMap<>();
@@ -759,7 +763,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		if (!oldFloat.containsKey(key)) {
 			oldFloat.put(key, round(currentValue, 5));
 		} else {
-			if (!(Float.compare(oldFloat.get(key), currentValue) == 0)) {
+			if (!(Float.compare(oldFloat.get(key), round(currentValue, 5)) == 0)) {
 				oldFloat.replace(key, round(currentValue, 5));
 				alarmFloatMap.put(key, round(currentValue, 5));
 				try {
@@ -864,11 +868,26 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				floatTrigThresholdMax = processFloatNode(deviceData.getJSONObject("floatAddr"), "max");
 
 				// set all the allow write of the alarm to "true" for each tag
-				analogAllowWrite = processBooleanAllowNode(deviceData.getJSONObject("aiAddr"));
-				analogAllowWrite.putAll(processBooleanAllowNode(deviceData.getJSONObject("ai32Addr")));
-				analogAllowWrite.putAll(processBooleanAllowNode(deviceData.getJSONObject("aiSAddr")));
+				// allowing write if Low Condition
+				analogAllowWriteLow = processBooleanAllowNode(deviceData.getJSONObject("aiAddr"));
+				analogAllowWriteLow.putAll(processBooleanAllowNode(deviceData.getJSONObject("ai32Addr")));
+				analogAllowWriteLow.putAll(processBooleanAllowNode(deviceData.getJSONObject("aiSAddr")));
 
-				floatAllowWrite = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
+				floatAllowWriteLow = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
+
+				// allowing write if High Condition
+				analogAllowWriteHigh = processBooleanAllowNode(deviceData.getJSONObject("aiAddr"));
+				analogAllowWriteHigh.putAll(processBooleanAllowNode(deviceData.getJSONObject("ai32Addr")));
+				analogAllowWriteHigh.putAll(processBooleanAllowNode(deviceData.getJSONObject("aiSAddr")));
+
+				floatAllowWriteHigh = processBooleanAllowNode(deviceData.getJSONObject("floatAddr"));
+
+				// allowing write if Normal Condition
+				analogAllowWriteNorm = processBooleanAllowNodeFalse(deviceData.getJSONObject("aiAddr"));
+				analogAllowWriteNorm.putAll(processBooleanAllowNodeFalse(deviceData.getJSONObject("ai32Addr")));
+				analogAllowWriteNorm.putAll(processBooleanAllowNodeFalse(deviceData.getJSONObject("aiSAddr")));
+
+				floatAllowWriteNorm = processBooleanAllowNodeFalse(deviceData.getJSONObject("floatAddr"));
 
 				this.tagNeedToRecordAnalog = processNeedToRecordAnalog();
 				this.tagNeedToRecordFloat = processNeedToRecordFloat();
@@ -890,6 +909,17 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 		while (keys.hasNext()) {
 			String key = keys.next();
 			booleanMap.put(key, true);
+		}
+		return booleanMap;
+	}
+
+	private static HashMap<String, Boolean> processBooleanAllowNodeFalse(JSONObject integerNode) throws JSONException {
+		HashMap<String, Boolean> booleanMap = new HashMap<>();
+		@SuppressWarnings("unchecked")
+		Iterator<String> keys = integerNode.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			booleanMap.put(key, false);
 		}
 		return booleanMap;
 	}
