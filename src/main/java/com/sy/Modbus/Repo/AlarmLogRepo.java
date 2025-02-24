@@ -24,7 +24,7 @@ public interface AlarmLogRepo extends JpaRepository<AlarmLog, Long> {
 
 	@Transactional
 	@Modifying
-	@Query("DELETE FROM RecordLog r WHERE r.createdDate < :cutoffDate")
+	@Query("DELETE FROM AlarmLog r WHERE r.logDate < :cutoffDate")
 	void deleteOlderThanTwoMonths(@Param("cutoffDate") LocalDateTime cutoffDate);
 
 }
