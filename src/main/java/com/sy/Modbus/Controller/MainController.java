@@ -57,7 +57,7 @@ public class MainController {
 		return recordLogRepo.findBySiteNameAndTagNameAndCreatedDateBetween(site, tagName, startDate, endDate);
 	}
 
-	@Scheduled(cron = "0 0 18 ? * MON-FRI", zone = "Asia/Kuala_Lumpur")
+	@Scheduled(cron = "0 0 18 ? * *", zone = "Asia/Kuala_Lumpur") // Trigger Everyday at 6pm
 	// @Scheduled(cron = "0 * * * * ?", zone = "Asia/Kuala_Lumpur") // Every minutes
 	public void deleteOldData() {
 		alarmLogRepo.deleteOlderThanTwoMonths(LocalDateTime.now().minusMonths(2));

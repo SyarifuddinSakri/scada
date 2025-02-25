@@ -121,7 +121,7 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 			this.deviceData = deviceData;
 			this.ipAddr = deviceData.getString("ipAddress");
 			this.modbusPort = deviceData.getInt("portModbus");
-			this.webSocketPort = deviceData.getInt("portWebSocket");
+			// this.webSocketPort = deviceData.getInt("portWebSocket");
 			this.deviceName = deviceName;
 			this.alarmLogRepo = alarmLogRepo;
 		} catch (JSONException e) {
@@ -131,10 +131,10 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 
 	@Override
 	public void start() {
+		super.start();
 		putAllAddressAlarm();
 		System.out.println(getTime() + deviceName + " is starting.");
 		writeLog(deviceName + " is starting.");
-		super.start();
 		timerTask();
 	}
 
@@ -347,9 +347,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									System.out.println(getTime() + "Warning, the address " + diAddr.get(key)
 											+ " named " + key + " is not available in the device : " + ipAddr
 											+ " Please check your Digital Address" + e.getMessage());
-									writeLog("Warning, the address " + diAddr.get(key) + "  named "
-											+ key + " is not available in the device : " + ipAddr
-											+ " Please check your Digital Address" + e.getMessage());
 									notAvail.put(key, diAddr.get(key));
 									diAddr.remove(key);
 								}
@@ -391,9 +388,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									System.out.println(getTime() + "Warning, the address " + aiAddr.get(key)
 											+ " named " + key + " is not available in the device : "
 											+ ipAddr + " Please check your Analog 16 bits Address");
-									writeLog("Warning, the address " + aiAddr.get(key) + " named "
-											+ key + " is not available in the device : " + ipAddr
-											+ " Please check your Analog 16 bits Address");
 									notAvail.put(key, aiAddr.get(key));
 									aiAddr.remove(key);
 								}
@@ -437,9 +431,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									System.out.println(getTime() + "Warning, the address " + ai32Addr.get(key)
 											+ " named " + key + " is not available in the device : "
 											+ ipAddr + " Please check your Analog 32 bits Address");
-									writeLog("Warning, the address " + ai32Addr.get(key)
-											+ " named " + key + " is not available in the device : "
-											+ ipAddr + " Please check your Analog 32 bits Address");
 									notAvail.put(key, ai32Addr.get(key));
 									ai32Addr.remove(key);
 								}
@@ -481,9 +472,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									System.out.println(getTime() + "Warning, the address " + aiSAddr.get(key)
 											+ " named " + key + " is not available in the device : "
 											+ ipAddr + " Please check your Analog 16 bits Signed Address");
-									writeLog("Warning, the address " + aiSAddr.get(key) + " named "
-											+ key + " is not available in the device : " + ipAddr
-											+ " Please check your Analog 16 Signed bits Address");
 									notAvail.put(key, aiSAddr.get(key));
 									aiSAddr.remove(key);
 								}
@@ -522,9 +510,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									connection = null;
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + coilAddr.get(key)
-											+ " named " + key
-											+ " is not available in the device. Please check your Read Coil Status Address");
-									writeLog("Warning, the address " + coilAddr.get(key)
 											+ " named " + key
 											+ " is not available in the device. Please check your Read Coil Status Address");
 									notAvail.put(key, coilAddr.get(key));
@@ -584,9 +569,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 									System.out.println(getTime() + "Warning, the address "
 											+ textAddr.get(key).get("Address") + " named " + key
 											+ " is not available in the device. Please check your Read Text Address");
-									writeLog("Warning, the address " + textAddr.get(key).get("Address")
-											+ " named " + key
-											+ " is not available in the device. Please check your Read Text Address");
 									notAvail.put(key, textAddr.get(key).get("Address"));
 									textAddr.remove(key);
 								}
@@ -631,9 +613,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 								} catch (ModbusSlaveException e) {
 									System.out.println(getTime() + "Warning, the address " + floatAddr.get(key)
 											+ " named " + key + " is not available in the device : " + ipAddr
-											+ " Please check your Analog 32 bits Address");
-									writeLog("Warning, the address " + floatAddr.get(key) + " named "
-											+ key + " is not available in the device : " + ipAddr
 											+ " Please check your Analog 32 bits Address");
 									notAvail.put(key, floatAddr.get(key));
 									floatAddr.remove(key);
@@ -1017,7 +996,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				}
 			}
 		}
-		System.out.println(dataNeedToScheduled);
 		return dataNeedToScheduled;
 	}
 
