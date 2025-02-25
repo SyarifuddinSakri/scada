@@ -1017,7 +1017,6 @@ public abstract class ModbusDeviceTransaction extends WebSocketServer {
 				// this is where the code fall if the "scheduled" is not available for the tag
 			}
 		}
-		System.out.println(dataNeedToScheduled);
 		return dataNeedToScheduled;
 	}
 
